@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-class WeekReportPage extends StatelessWidget {
-  const WeekReportPage({Key? key}) : super(key: key);
+class WeeklyForecastPage extends StatelessWidget {
+  const WeeklyForecastPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

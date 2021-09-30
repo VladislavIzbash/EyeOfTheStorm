@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
           topLeft: Radius.circular(15),
           topRight: Radius.circular(15),
         ),
-        panel: _DailyReportSheet(),
+        panel: _HourlyForecastPanel(),
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
                       ),
                       _ExtrudedButton(
                         child: const Icon(Icons.add, color: Colors.white),
-                        onPressed: () {},
+                        onPressed: () => Navigator.pushNamed(context, '/cities'),
                       ),
                     ],
                   ),
@@ -126,7 +126,7 @@ class _ExtrudedButton extends StatelessWidget {
   }
 }
 
-class _DailyReportSheet extends StatelessWidget {
+class _HourlyForecastPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(

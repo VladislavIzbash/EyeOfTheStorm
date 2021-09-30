@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.vizbash.eye_of_the_storm">
-   <application
-        android:label="eye_of_the_storm"
-        android:icon="@mipmap/ic_launcher">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="Eye of the storm"
+        android:icon="@mipmap/ic_iots">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
-import 'week_report_page.dart';
+import 'weekly_forecast_page.dart';
+import 'city_search_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -40,7 +41,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => const HomePage(),
-        '/week': (_) => const WeekReportPage(),
+        '/week': (_) => const WeeklyForecastPage(),
+        '/cities': (_) => const CitySearchPage(),
       },
     );
   }
