@@ -1,10 +1,20 @@
+import 'package:eye_of_the_storm/weather_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page.dart';
 import 'weekly_forecast_page.dart';
 import 'city_search_page.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  await dotenv.load(fileName: '.env');
+
+  runApp(ChangeNotifierProvider(
+    create: (context) => WeatherModel(),
+    child: const MyApp(),
+  ));
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -23,7 +33,10 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           foregroundColor: Colors.black,
           backgroundColor: lightBackground,
-        )
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Colors.white,
+        ),
       ),
       darkTheme: ThemeData(
         primaryColor: Colors.white,

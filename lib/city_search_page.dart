@@ -1,4 +1,7 @@
+import 'package:eye_of_the_storm/weather_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'city_search.dart' as cities;
 
 class CitySearchPage extends StatefulWidget {
@@ -12,7 +15,7 @@ class _CitySearchPageState extends State<CitySearchPage> {
   final searchFocus = FocusNode();
   final searchController = TextEditingController();
 
-  Future<List<String>> cityList = Future.value([]);
+  Future<List<cities.SearchResult>> cityList = Future.value([]);
 
   @override
   void initState() {
@@ -32,7 +35,7 @@ class _CitySearchPageState extends State<CitySearchPage> {
     }
 
     setState(() {
-      cityList = cities.fetchCities(searchController.text, 20);
+      cityList = cities.searchCities(searchController.text, 20);
     });
   }
 
@@ -57,9 +60,9 @@ class _CitySearchPageState extends State<CitySearchPage> {
           ),
         ],
       ),
-      body: FutureBuilder<List<String>>(
+      body: FutureBuilder<List<cities.SearchResult>>(
         future: cityList,
-        builder: (c, snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Ошибка: ${snapshot.error!}'));
           }
@@ -68,11 +71,19 @@ class _CitySearchPageState extends State<CitySearchPage> {
           }
 
           return ListView.separated(
-            separatorBuilder: (c, index) => const Divider(),
+            separatorBuilder: (context, index) => const Divider(),
             itemCount: snapshot.data!.length,
-            itemBuilder: (c, index) {
-              return ListTile(
-                title: Text(snapshot.data![index]),
+            itemBuilder: (context, index) {
+              var res = snapshot.data![index];
+              return GestureDetector(
+                child: ListTile(
+                  title: Text('${res.city} - ${res.country}'),
+                ),
+                onTap: () {
+                  var weather = context.read<WeatherModel>();
+                  weather.currentCity = res.city;
+                  Navigator.pop(context);
+                },
               );
             },
           );

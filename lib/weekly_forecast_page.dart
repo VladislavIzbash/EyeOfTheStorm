@@ -65,7 +65,7 @@ class _WeatherDayReport extends StatelessWidget {
                 ),
               ),
               _WeatherParam(
-                image: AssetImage('assets/images/icons/thermometer.png'),
+                image: AssetImage('assets/images/icons/temperature.png'),
                 text: '10 °C',
               ),
               _WeatherParam(
@@ -73,7 +73,7 @@ class _WeatherDayReport extends StatelessWidget {
                 text: '9 м/с',
               ),
               _WeatherParam(
-                image: AssetImage('assets/images/icons/waterdrop.png'),
+                image: AssetImage('assets/images/icons/humidity.png'),
                 text: '87%',
               ),
               _WeatherParam(

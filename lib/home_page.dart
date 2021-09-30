@@ -1,14 +1,18 @@
+import 'package:eye_of_the_storm/weather_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:provider/provider.dart';
+import 'dart:developer' as dev;
+
+import 'weather_model.dart';
+import 'weather_api.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var pc = PanelController();
-
     return Scaffold(
       drawer: Drawer(
         child: Container(
@@ -45,8 +49,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       body: SlidingUpPanel(
-        controller: pc,
-        minHeight: 50,
+        minHeight: 35,
         maxHeight: 230,
         padding: const EdgeInsets.all(5),
         color: Theme.of(context).backgroundColor,
@@ -76,9 +79,13 @@ class HomePage extends StatelessWidget {
                         child: const Icon(Icons.menu, color: Colors.white),
                         onPressed: () => Scaffold.of(context).openDrawer(),
                       )),
-                      const Text(
-                        'Санкт-Петербург',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      Consumer<WeatherModel>(
+                        builder: (context, weather, child) {
+                          return Text(
+                            weather.currentCity,
+                            style: const TextStyle(fontSize: 20, color: Colors.white),
+                          );
+                        }
                       ),
                       _ExtrudedButton(
                         child: const Icon(Icons.add, color: Colors.white),
@@ -88,13 +95,37 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 50),
-                const Text(
-                  '10 °C',
-                  style: TextStyle(fontSize: 50, color: Colors.white),
-                ),
-                const Text(
-                  '23 cент. 2021',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                Consumer<WeatherModel>(
+                  builder: (context, weather, child) {
+                    return FutureBuilder<WeatherForecast>(
+                      future: weather.fetchWeatherForecast(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          dev.log('Error: ${snapshot.error}');
+                          return const Text(
+                            'Не удалось получить данные',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          );
+                        }
+                        if (!snapshot.hasData) {
+                          return const CircularProgressIndicator();
+                        }
+                        var date = snapshot.data!.current.date;
+                        return Column(
+                          children: [
+                            Text(
+                              '${snapshot.data!.current.temp.round()} °C',
+                              style: const TextStyle(fontSize: 50, color: Colors.white),
+                            ),
+                            Text(
+                              '${date.day} ${_months[date.month]} ${date.year}г.',
+                              style: const TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -187,3 +218,18 @@ class _WeatherCard extends StatelessWidget {
     );
   }
 }
+
+const _months = {
+  1: 'янв.',
+  2: 'февр.',
+  3: 'марта',
+  4: 'апр.',
+  5: 'мая',
+  6: 'июня',
+  7: 'июля',
+  8: 'авг.',
+  9: 'сент.',
+  10: 'окт.',
+  11: 'ноября',
+  12: 'дек.',
+};

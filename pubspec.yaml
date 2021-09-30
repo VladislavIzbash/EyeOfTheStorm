@@ -46,10 +46,12 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
   http: ^0.13.3
+  async: ^2.8.1
+  provider: ^6.0.1
+  flutter_dotenv: ^5.0.2
   flutter_neumorphic:
     git:
       url: https://github.com/tsvillain/Flutter-Neumorphic.git
-  modal_bottom_sheet: ^2.0.0
   sliding_up_panel: ^2.0.0+1
 
 # For information on the generic Dart part of this file, see the
@@ -65,7 +67,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - geonames_key
+    - .env
     - assets/images/
     - assets/images/weather/
     - assets/images/icons/

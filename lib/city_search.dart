@@ -1,16 +1,29 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<String>> fetchCities(String query, int maxRows) async {
-  var username = await rootBundle.loadString('geonames_key');
+class SearchResult {
+  String city;
+  String country;
+
+  SearchResult(this.city, this.country);
+
+  @override
+  bool operator==(o) => o is SearchResult && city == o.city && country == o.country;
+
+  @override
+  int get hashCode => city.hashCode ^ country.hashCode;
+
+}
+
+Future<List<SearchResult>> searchCities(String query, int maxRows) async {
   var url = Uri.http('api.geonames.org', '/searchJSON', {
     'q': query,
     'maxRows': maxRows.toString(),
     'lang': 'ru',
     'fuzzy': '1',
-    'username': username,
+    'username': dotenv.env['GEONAMES_KEY'],
   });
 
   http.Response resp = await http.get(url);
@@ -21,7 +34,8 @@ Future<List<String>> fetchCities(String query, int maxRows) async {
   }
 
   return (json['geonames'] as List)
-      .map((geoname) => "${geoname['name']} - ${geoname['countryName']}")
+      .where((geoname) => geoname['countryName'] != null)
+      .map((geoname) => SearchResult(geoname['name'], geoname['countryName']))
       .toSet()
       .toList();
 }
