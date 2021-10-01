@@ -75,14 +75,15 @@ class _CitySearchPageState extends State<CitySearchPage> {
             separatorBuilder: (context, index) => const Divider(),
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              var res = snapshot.data![index];
+              var item = snapshot.data![index];
               return GestureDetector(
                 child: ListTile(
-                  title: Text('${res.city} - ${res.country}'),
+                  title: Text('${item.city} - ${item.country}'),
                 ),
                 onTap: () {
                   var weather = context.read<WeatherModel>();
-                  weather.currentCity = res.city;
+                  weather.currentCity = item.city;
+                  weather.addFavoriteCity(item.city);
                   Navigator.pop(context);
                 },
               );

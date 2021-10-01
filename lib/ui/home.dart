@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.favorite),
                   title: const Text('Избранное'),
-                  onTap: () {},
+                  onTap: () => Navigator.pushNamed(context, '/favorites'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.info),

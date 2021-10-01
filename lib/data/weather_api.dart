@@ -54,7 +54,7 @@ Future<_GeoPos> _directGeocode(String city) async {
   http.Response resp = await http.get(url);
   var json = jsonDecode(resp.body)[0];
 
-  return _GeoPos(json['lat'], json['lon']);
+  return _GeoPos(json['lat'].toDouble(), json['lon'].toDouble());
 }
 
 Future<WeatherForecast> fetchWeatherForecast(String city) async {

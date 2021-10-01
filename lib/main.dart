@@ -1,4 +1,5 @@
 import 'package:eye_of_the_storm/data/weather_model.dart';
+import 'package:eye_of_the_storm/ui/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +13,12 @@ Future<void> main() async {
 
   runApp(ChangeNotifierProvider(
     create: (context) => WeatherModel(),
-    child: const MyApp(),
+    child: const EotsApp(),
   ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class EotsApp extends StatelessWidget {
+  const EotsApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +51,10 @@ class MyApp extends StatelessWidget {
       title: 'Eye of the storm',
       initialRoute: '/',
       routes: {
-        '/': (_) => const HomePage(),
-        '/week': (_) => const WeeklyForecastPage(),
-        '/cities': (_) => const CitySearchPage(),
+        '/': (context) => const HomePage(),
+        '/week': (context) => const WeeklyForecastPage(),
+        '/cities': (context) => const CitySearchPage(),
+        '/favorites': (context) => const FavoritesPage(),
       },
     );
   }
