@@ -8,18 +8,20 @@ class Weather {
   final int pressure;
   final int humidity;
   final double windSpeed;
-  final int code;
+  final int conditionCode;
 
-  Weather(this.date, this.temp, this.pressure,
-      this.humidity, this.windSpeed, this.code,);
+  Weather(
+      this.date, this.temp, this.pressure,
+      this.humidity, this.windSpeed, this.conditionCode,
+  );
 
-  Weather.fromJson(Map<String, dynamic> json)
+  Weather.fromJson(Map<String, dynamic> json, bool isDaily)
       : date = DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000, isUtc: true),
-        temp = json['temp'].toDouble(),
+        temp = (isDaily ? json['temp']['day'] : json['temp']).toDouble(),
         pressure = json['pressure'],
         humidity = json['humidity'],
         windSpeed = json['wind_speed'].toDouble(),
-        code = json['weather'][0]['id'];
+        conditionCode = json['weather'][0]['id'];
 }
 
 class WeatherForecast {
@@ -30,9 +32,9 @@ class WeatherForecast {
   WeatherForecast(this.current, this.hourly, this.daily);
 
   WeatherForecast.fromJson(Map<String, dynamic> json)
-    : current = Weather.fromJson(json['current']),
-      hourly = (json['hourly'] as List).map((w) => Weather.fromJson(w)).toList(),
-      daily = (json['hourly'] as List).map((w) => Weather.fromJson(w)).toList();
+    : current = Weather.fromJson(json['current'], false),
+      hourly = (json['hourly'] as List).map((w) => Weather.fromJson(w, false)).toList(),
+      daily = (json['daily'] as List).map((w) => Weather.fromJson(w, true)).toList();
 }
 
 class _GeoPos {

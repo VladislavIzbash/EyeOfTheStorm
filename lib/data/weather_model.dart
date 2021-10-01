@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:async/async.dart';
 
-import 'weather_api.dart' as api;
+import 'package:eye_of_the_storm/data/weather_api.dart' as api;
 
 class WeatherModel extends ChangeNotifier {
   final _weatherCache = AsyncCache<api.WeatherForecast>(const Duration(minutes: 5));

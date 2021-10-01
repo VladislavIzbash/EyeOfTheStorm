@@ -1,11 +1,11 @@
-import 'package:eye_of_the_storm/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'home_page.dart';
-import 'weekly_forecast_page.dart';
-import 'city_search_page.dart';
+import 'package:eye_of_the_storm/ui/home.dart';
+import 'package:eye_of_the_storm/ui/weekly_forecast.dart';
+import 'package:eye_of_the_storm/ui/city_search.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -33,9 +33,6 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           foregroundColor: Colors.black,
           backgroundColor: lightBackground,
-        ),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: Colors.white,
         ),
       ),
       darkTheme: ThemeData(

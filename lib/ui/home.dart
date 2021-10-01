@@ -1,12 +1,14 @@
-import 'package:eye_of_the_storm/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'dart:developer' as dev;
 
-import 'weather_model.dart';
-import 'weather_api.dart';
+import 'package:eye_of_the_storm/data/weather_api.dart';
+import 'package:eye_of_the_storm/ui/weather_icons.dart';
+import 'package:eye_of_the_storm/ui/about.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,7 +25,7 @@ class HomePage extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    'Eye of the storm',
+                    'Eye Of The Storm',
                     style: TextStyle(fontSize: 25),
                   ),
                 ),
@@ -41,7 +43,10 @@ class HomePage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.info),
                   title: const Text('О приложении'),
-                  onTap: () {},
+                  onTap: () => showDialog<void>(
+                    context: context,
+                    builder: (context) => const EotsAboutDialog(),
+                  ),
                 ),
               ],
             ),
@@ -108,7 +113,7 @@ class HomePage extends StatelessWidget {
                           );
                         }
                         if (!snapshot.hasData) {
-                          return const CircularProgressIndicator();
+                          return const CircularProgressIndicator(color: Colors.white);
                         }
                         var date = snapshot.data!.current.date;
                         return Column(
@@ -160,6 +165,8 @@ class _ExtrudedButton extends StatelessWidget {
 class _HourlyForecastPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var weather = context.watch<WeatherModel>();
+
     return Column(
       children: [
         Container(
@@ -168,25 +175,40 @@ class _HourlyForecastPanel extends StatelessWidget {
           color: Theme.of(context).primaryColor,
         ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _WeatherCard(),
-            _WeatherCard(),
-            _WeatherCard(),
-            _WeatherCard(),
-          ],
-        ),
-        const SizedBox(height: 10),
-        TextButton(
-          style: ButtonStyle(shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: Theme.of(context).primaryColor),
-            )
-          )),
-          child: const Text('Прогноз на неделю'),
-          onPressed: () => Navigator.pushNamed(context, '/week'),
+        FutureBuilder<WeatherForecast>(
+          future: weather.fetchWeatherForecast(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Не удалось получить данные');
+            }
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator();
+            }
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _WeatherCard(snapshot.data!.hourly[0]),
+                    _WeatherCard(snapshot.data!.hourly[6]),
+                    _WeatherCard(snapshot.data!.hourly[12]),
+                    _WeatherCard(snapshot.data!.hourly[18]),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextButton(
+                  style: ButtonStyle(shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: Theme.of(context).primaryColor),
+                      )
+                  )),
+                  child: const Text('Прогноз на неделю'),
+                  onPressed: () => Navigator.pushNamed(context, '/week'),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -194,24 +216,47 @@ class _HourlyForecastPanel extends StatelessWidget {
 }
 
 class _WeatherCard extends StatelessWidget {
+  final Weather _weather;
+
+  const _WeatherCard(this._weather);
+
   @override
   Widget build(BuildContext context) {
+    var imgPath = weatherIcons[_weather.conditionCode];
+    Widget img;
+    if (imgPath != null) {
+      img = Image(
+        image: AssetImage(imgPath),
+        width: 50,
+        height: 50,
+      );
+    } else {
+      img = SizedBox(
+        width: 50,
+        height: 50,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(),
+          ),
+          child: Center(
+            child: Text(_weather.conditionCode.toString()),
+          ),
+        ),
+      );
+    }
+
     return Card(
       elevation: 3,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
-          children: const [
-            Text('12:00'),
+          children: [
+            Text(DateFormat('HH:mm').format(_weather.date)),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Image(
-                image: AssetImage('assets/images/weather/cloudy_rain.png'),
-                width: 50,
-                height: 50,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: img,
             ),
-            Text('10 °C'),
+            Text('${_weather.temp.round()} °C'),
           ],
         ),
       ),
@@ -220,16 +265,16 @@ class _WeatherCard extends StatelessWidget {
 }
 
 const _months = {
-  1: 'янв.',
-  2: 'февр.',
-  3: 'марта',
-  4: 'апр.',
-  5: 'мая',
-  6: 'июня',
-  7: 'июля',
-  8: 'авг.',
-  9: 'сент.',
-  10: 'окт.',
-  11: 'ноября',
-  12: 'дек.',
+  DateTime.january: 'янв.',
+  DateTime.february: 'февр.',
+  DateTime.march: 'марта',
+  DateTime.april: 'апр.',
+  DateTime.may: 'мая',
+  DateTime.june: 'июня',
+  DateTime.july: 'июля',
+  DateTime.august: 'авг.',
+  DateTime.september: 'сент.',
+  DateTime.october: 'окт.',
+  DateTime.november: 'ноября',
+  DateTime.december: 'дек.',
 };

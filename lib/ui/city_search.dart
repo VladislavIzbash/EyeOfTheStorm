@@ -1,8 +1,9 @@
-import 'package:eye_of_the_storm/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:developer' as dev;
 
-import 'city_search.dart' as cities;
+import 'package:eye_of_the_storm/data/city_search.dart' as cities;
 
 class CitySearchPage extends StatefulWidget {
   const CitySearchPage({Key? key}) : super(key: key);
@@ -12,30 +13,30 @@ class CitySearchPage extends StatefulWidget {
 }
 
 class _CitySearchPageState extends State<CitySearchPage> {
-  final searchFocus = FocusNode();
-  final searchController = TextEditingController();
+  final _searchFocus = FocusNode();
+  final _searchController = TextEditingController();
 
   Future<List<cities.SearchResult>> cityList = Future.value([]);
 
   @override
   void initState() {
     super.initState();
-    searchFocus.requestFocus();
+    _searchFocus.requestFocus();
   }
 
   @override
   void dispose() {
-    searchController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   void _fetchCities() {
-    if (searchController.text.isEmpty) {
+    if (_searchController.text.isEmpty) {
       return;
     }
 
     setState(() {
-      cityList = cities.searchCities(searchController.text, 20);
+      cityList = cities.searchCities(_searchController.text, 20);
     });
   }
 
@@ -45,12 +46,12 @@ class _CitySearchPageState extends State<CitySearchPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: TextField(
-          focusNode: searchFocus,
-          controller: searchController,
+          focusNode: _searchFocus,
+          controller: _searchController,
           onEditingComplete: _fetchCities,
           style: const TextStyle(fontSize: 20),
           decoration: const InputDecoration(
-            hintText: 'Город',
+            hintText: 'Введите город',
           ),
         ),
         actions: [
@@ -64,12 +65,12 @@ class _CitySearchPageState extends State<CitySearchPage> {
         future: cityList,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('Ошибка: ${snapshot.error!}'));
+            dev.log('Error: ${snapshot.error}');
+            return const Center(child: Text('Не удалось получить результаты'));
           }
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           return ListView.separated(
             separatorBuilder: (context, index) => const Divider(),
             itemCount: snapshot.data!.length,
