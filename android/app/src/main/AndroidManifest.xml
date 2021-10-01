@@ -4,8 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="Eye of the storm"
-        android:icon="@mipmap/ic_iots">
+        android:label="Eye Of The Storm"
+        android:icon="@mipmap/ic_eots">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
