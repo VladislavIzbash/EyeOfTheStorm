@@ -1,8 +1,9 @@
 import 'package:eye_of_the_storm/data/weather_api.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 
 import 'package:eye_of_the_storm/data/weather.dart';
+import 'package:eye_of_the_storm/data/settings.dart';
 import 'package:eye_of_the_storm/ui/weather_icons.dart';
 
 class WeeklyForecastPage extends StatelessWidget {
@@ -13,8 +14,7 @@ class WeeklyForecastPage extends StatelessWidget {
     var weather = context.watch<WeatherModel>();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
+      appBar: NeumorphicAppBar(
         title: const Text('Прогноз на неделю'),
       ),
       body: FutureBuilder<WeatherForecast>(
@@ -80,6 +80,8 @@ class _WeatherDayCard extends StatelessWidget {
       );
     }
 
+    var units = context.select<SettingsModel, UnitSettings>((w) => w.units);
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       child: Container(
@@ -106,11 +108,11 @@ class _WeatherDayCard extends StatelessWidget {
               ),
               _WeatherParam(
                 image: const AssetImage('assets/images/icons/temperature.png'),
-                text: '${_weather.temp.round()} °C',
+                text: units.formatTemp(_weather.temp),
               ),
               _WeatherParam(
                 image: const AssetImage('assets/images/icons/wind.png'),
-                text: '${_weather.windSpeed.round()} м/с',
+                text: units.formatSpeed(_weather.windSpeed),
               ),
               _WeatherParam(
                 image: const AssetImage('assets/images/icons/humidity.png'),
@@ -118,7 +120,7 @@ class _WeatherDayCard extends StatelessWidget {
               ),
               _WeatherParam(
                 image: const AssetImage('assets/images/icons/pressure.png'),
-                text: '${_weather.pressure} мм.рт.ст',
+                text: units.formatPressure(_weather.pressure),
               ),
             ],
           ),

@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -190,8 +189,8 @@ class _WeatherCard extends StatelessWidget {
       );
     }
 
-    return Card(
-      elevation: 3,
+    return Neumorphic(
+      // elevation: 3,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(

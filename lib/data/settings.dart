@@ -14,7 +14,7 @@ class UnitSettings {
 
   UnitSettings.fromPrefs(SharedPreferences prefs)
     : temp = prefs.getString('temp_unit') == 'F' ? TempUnit.fahrenheit : TempUnit.celsius,
-      speed = prefs.getString('speed_unit') == 'km_h' ? SpeedUnit.meterSecond : SpeedUnit.kmHour,
+      speed = prefs.getString('speed_unit') == 'km_h' ? SpeedUnit.kmHour : SpeedUnit.meterSecond,
       pressure = prefs.getString('pressure_unit') == 'kpa' ? PressureUnit.kpa : PressureUnit.mmHg;
 
   void save(SharedPreferences prefs) {
@@ -27,8 +27,7 @@ class UnitSettings {
     if (temp == TempUnit.celsius) {
       return '${tempC.round()} °C';
     } else {
-      var tempF = tempC * 9 / 5 + 32;
-      return '${tempF.round()} °F';
+      return '${(tempC * 9 / 5 + 32).round()} °F';
     }
   }
 
@@ -36,7 +35,7 @@ class UnitSettings {
     if (speed == SpeedUnit.meterSecond) {
       return '$meterS м/с';
     } else {
-      return '${meterS * 3.6} м/с';
+      return '${(meterS * 3.6).round()} м/с';
     }
   }
 

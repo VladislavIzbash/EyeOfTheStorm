@@ -1,5 +1,4 @@
 import 'package:eye_of_the_storm/data/weather.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +72,48 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-      )
+      ),
+    );
+  }
+}
+
+class _EotsDrawer extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'Eye Of The Storm',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Настройки'),
+                onTap: () => Navigator.pushNamed(context, '/settings'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.favorite),
+                title: const Text('Избранное'),
+                onTap: () => Navigator.pushNamed(context, '/favorites'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('О приложении'),
+                  onTap: () => Navigator.pushNamed(context, '/about')
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -112,50 +152,6 @@ class _CurrentTemp extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class _EotsDrawer extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Container(
-        color: Theme.of(context).backgroundColor,
-        child: SafeArea(
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Eye Of The Storm',
-                  style: TextStyle(fontSize: 25),
-                ),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Настройки'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite),
-                title: const Text('Избранное'),
-                onTap: () => Navigator.pushNamed(context, '/favorites'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('О приложении'),
-                onTap: () => showDialog<void>(
-                  context: context,
-                  builder: (context) => const EotsAboutDialog(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

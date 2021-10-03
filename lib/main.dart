@@ -1,13 +1,15 @@
-import 'package:eye_of_the_storm/data/weather.dart';
-import 'package:eye_of_the_storm/ui/favorites.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'package:eye_of_the_storm/ui/home.dart';
 import 'package:eye_of_the_storm/ui/weekly_forecast.dart';
 import 'package:eye_of_the_storm/ui/city_search.dart';
+import 'package:eye_of_the_storm/ui/settings.dart';
 import 'package:eye_of_the_storm/data/settings.dart';
+import 'package:eye_of_the_storm/data/weather.dart';
+import 'package:eye_of_the_storm/ui/about.dart';
+import 'package:eye_of_the_storm/ui/favorites.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -15,8 +17,8 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
-      Provider<WeatherModel>(create: (context) => WeatherModel()),
-      Provider<SettingsModel>(create: (context) => SettingsModel()),
+      ChangeNotifierProvider<WeatherModel>(create: (context) => WeatherModel()),
+      ChangeNotifierProvider<SettingsModel>(create: (context) => SettingsModel()),
     ],
     child: const EotsApp(),
   ));
@@ -27,30 +29,56 @@ class EotsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const lightBackground = Color.fromARGB(255, 226, 235, 255);
-    const darkBackground = Color.fromARGB(255, 12, 22, 43);
+    const lightPrimary = Color(0xffe2ebff);
+    const darkPrimary = Color(0xff0c1620);
 
-    return MaterialApp(
+    return NeumorphicApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: lightBackground,
-        backgroundColor: lightBackground,
-        cardColor: lightBackground,
-        appBarTheme: const AppBarTheme(
-          foregroundColor: Colors.black,
-          backgroundColor: lightBackground,
+      theme: const NeumorphicThemeData(
+        baseColor: lightPrimary,
+        variantColor: Color(0xffe1e9ff),
+        accentColor: Color(0xff4b5f88),
+        appBarTheme: NeumorphicAppBarThemeData(
+          color: lightPrimary,
+        ),
+        textTheme: TextTheme(
+          subtitle1: TextStyle(color: Color(0xff656565)),
+          subtitle2: TextStyle(color: Colors.white),
         ),
       ),
-      darkTheme: ThemeData(
+      darkTheme: const NeumorphicThemeData(
+        baseColor: darkPrimary,
+        variantColor: Color(0xff0d172b),
+        accentColor: Color(0xff0a1121),
+        shadowLightColor: Colors.white,
+        defaultTextColor: Colors.white,
+        textTheme: TextTheme(
+          subtitle1: TextStyle(color: Color(0xffe5e5e5)),
+          subtitle2: TextStyle(color: Colors.white),
+        ),
+      ),
+      materialTheme: ThemeData(
+        scaffoldBackgroundColor: lightPrimary,
+        backgroundColor: lightPrimary,
+        cardColor: lightPrimary,
+        appBarTheme: const AppBarTheme(
+          foregroundColor: Colors.black,
+          backgroundColor: lightPrimary,
+        ),
+      ),
+      materialDarkTheme: ThemeData(
+        scaffoldBackgroundColor: darkPrimary,
         primaryColor: Colors.white,
-        scaffoldBackgroundColor: darkBackground,
-        backgroundColor: darkBackground,
-        cardColor: darkBackground,
+        backgroundColor: darkPrimary,
+        cardColor: darkPrimary,
         brightness: Brightness.dark,
+        cardTheme: const CardTheme(
+          shadowColor: Colors.white,
+        ),
         textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(Colors.white),
-          )
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+            ),
         ),
       ),
       title: 'Eye of the storm',
@@ -60,6 +88,8 @@ class EotsApp extends StatelessWidget {
         '/week': (context) => const WeeklyForecastPage(),
         '/cities': (context) => const CitySearchPage(),
         '/favorites': (context) => const FavoritesPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/about': (context) => const AboutPage(),
       },
     );
   }

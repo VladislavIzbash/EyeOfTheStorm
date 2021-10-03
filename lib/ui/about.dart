@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 const _aboutText = '''
 Автор: Избаш В.В.
@@ -7,32 +8,62 @@ const _aboutText = '''
 - geonames.org
 ''';
 
-class EotsAboutDialog extends StatelessWidget {
-  const EotsAboutDialog({Key? key}) : super(key: key);
+class AboutPage extends StatelessWidget {
+  const AboutPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-
-      title: const Text('О приложении'),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Text(
-            'Eye Of The Storm v1.0',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Scaffold(
+      appBar: NeumorphicAppBar(
+        title: const Text('О приложении'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 30),
+          Center(
+            child: Neumorphic(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              style: NeumorphicStyle(
+                depth: -3,
+                color: NeumorphicTheme.variantColor(context),
+              ),
+              child: const Text(
+                'Eye of The Storm',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: 10),
-          Text(_aboutText),
+          const SizedBox(height: 180),
+          Expanded(
+            child: Neumorphic(
+              padding: const EdgeInsets.all(30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: const [
+                      Text(
+                        'by Vladislav Izbash',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text('Версия 1.0'),
+                      Text('от 3 октября 2021'),
+                    ],
+                  ),
+                  const Text(
+                    '2021',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
-      actions: [
-        TextButton(
-          child: const Text('Закрыть'),
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
     );
   }
 }

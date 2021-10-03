@@ -1,5 +1,5 @@
 import 'package:eye_of_the_storm/data/weather.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as dev;
 
@@ -43,8 +43,7 @@ class _CitySearchPageState extends State<CitySearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
+      appBar: NeumorphicAppBar(
         title: TextField(
           focusNode: _searchFocus,
           controller: _searchController,
@@ -76,9 +75,12 @@ class _CitySearchPageState extends State<CitySearchPage> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               var item = snapshot.data![index];
+              var isFavorite = context.read<WeatherModel>().favoriteCities.contains(item.city);
+
               return GestureDetector(
                 child: ListTile(
                   title: Text('${item.city} - ${item.country}'),
+                  trailing: Icon(isFavorite ? Icons.star : Icons.star_border),
                 ),
                 onTap: () {
                   var weather = context.read<WeatherModel>();
