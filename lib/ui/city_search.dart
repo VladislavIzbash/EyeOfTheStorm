@@ -1,4 +1,4 @@
-import 'package:eye_of_the_storm/data/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as dev;

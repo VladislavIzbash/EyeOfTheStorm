@@ -1,4 +1,4 @@
-import 'package:eye_of_the_storm/data/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather.dart';
 import 'package:eye_of_the_storm/ui/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,12 +7,17 @@ import 'package:provider/provider.dart';
 import 'package:eye_of_the_storm/ui/home.dart';
 import 'package:eye_of_the_storm/ui/weekly_forecast.dart';
 import 'package:eye_of_the_storm/ui/city_search.dart';
+import 'package:eye_of_the_storm/data/settings.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
+  await SettingsModel.initPrefs();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => WeatherModel(),
+  runApp(MultiProvider(
+    providers: [
+      Provider<WeatherModel>(create: (context) => WeatherModel()),
+      Provider<SettingsModel>(create: (context) => SettingsModel()),
+    ],
     child: const EotsApp(),
   ));
 }

@@ -1,14 +1,14 @@
-import 'package:eye_of_the_storm/data/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'dart:developer' as dev;
 
 import 'package:eye_of_the_storm/data/weather_api.dart';
-import 'package:eye_of_the_storm/ui/weather_icons.dart';
 import 'package:eye_of_the_storm/ui/about.dart';
+import 'package:eye_of_the_storm/ui/hourly_forecast.dart';
+import 'package:eye_of_the_storm/data/settings.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,53 +16,21 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Eye Of The Storm',
-                    style: TextStyle(fontSize: 25),
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Настройки'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.favorite),
-                  title: const Text('Избранное'),
-                  onTap: () => Navigator.pushNamed(context, '/favorites'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.info),
-                  title: const Text('О приложении'),
-                  onTap: () => showDialog<void>(
-                    context: context,
-                    builder: (context) => const EotsAboutDialog(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      drawer: _EotsDrawer(),
       body: SlidingUpPanel(
-        minHeight: 35,
-        maxHeight: 230,
+        maxHeight: 350,
+        minHeight: 230,
         padding: const EdgeInsets.all(5),
         color: Theme.of(context).backgroundColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(15),
           topRight: Radius.circular(15),
         ),
-        panel: _HourlyForecastPanel(),
+        panel: const HourlyForecast(expanded: true),
+        collapsed: Container(
+          color: Theme.of(context).backgroundColor,
+          child: const HourlyForecast(expanded: false),
+        ),
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -100,43 +68,94 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 50),
-                Consumer<WeatherModel>(
-                  builder: (context, weather, child) {
-                    return FutureBuilder<WeatherForecast>(
-                      future: weather.fetchWeatherForecast(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          dev.log('Error: ${snapshot.error}');
-                          return const Text(
-                            'Не удалось получить данные',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          );
-                        }
-                        if (!snapshot.hasData) {
-                          return const CircularProgressIndicator(color: Colors.white);
-                        }
-                        var date = snapshot.data!.current.date;
-                        return Column(
-                          children: [
-                            Text(
-                              '${snapshot.data!.current.temp.round()} °C',
-                              style: const TextStyle(fontSize: 50, color: Colors.white),
-                            ),
-                            Text(
-                              '${date.day} ${_months[date.month]} ${date.year}г.',
-                              style: const TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
+                _CurrentTemp(),
               ],
             ),
           ),
         ),
       )
+    );
+  }
+}
+
+class _CurrentTemp extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    var weather = context.watch<WeatherModel>();
+    var units = context.select<SettingsModel, UnitSettings>((w) => w.units);
+
+    return FutureBuilder<WeatherForecast>(
+      future: weather.fetchWeatherForecast(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          dev.log('Error: ${snapshot.error}');
+          return const Text(
+            'Не удалось получить данные',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          );
+        }
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator(color: Colors.white);
+        }
+        var date = snapshot.data!.current.date;
+        return Column(
+          children: [
+            Text(
+              units.formatTemp(snapshot.data!.current.temp),
+              style: const TextStyle(fontSize: 50, color: Colors.white),
+            ),
+            Text(
+              '${date.day} ${_shortMonths[date.month]} ${date.year}г.',
+              style: const TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _EotsDrawer extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'Eye Of The Storm',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Настройки'),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: const Icon(Icons.favorite),
+                title: const Text('Избранное'),
+                onTap: () => Navigator.pushNamed(context, '/favorites'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('О приложении'),
+                onTap: () => showDialog<void>(
+                  context: context,
+                  builder: (context) => const EotsAboutDialog(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -162,109 +181,7 @@ class _ExtrudedButton extends StatelessWidget {
   }
 }
 
-class _HourlyForecastPanel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var weather = context.watch<WeatherModel>();
-
-    return Column(
-      children: [
-        Container(
-          height: 5,
-          width: 50,
-          color: Theme.of(context).primaryColor,
-        ),
-        const SizedBox(height: 20),
-        FutureBuilder<WeatherForecast>(
-          future: weather.fetchWeatherForecast(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Не удалось получить данные');
-            }
-            if (!snapshot.hasData) {
-              return const CircularProgressIndicator();
-            }
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _WeatherCard(snapshot.data!.hourly[0]),
-                    _WeatherCard(snapshot.data!.hourly[6]),
-                    _WeatherCard(snapshot.data!.hourly[12]),
-                    _WeatherCard(snapshot.data!.hourly[18]),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: Theme.of(context).primaryColor),
-                      )
-                  )),
-                  child: const Text('Прогноз на неделю'),
-                  onPressed: () => Navigator.pushNamed(context, '/week'),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _WeatherCard extends StatelessWidget {
-  final Weather _weather;
-
-  const _WeatherCard(this._weather);
-
-  @override
-  Widget build(BuildContext context) {
-    var imgPath = weatherIcons[_weather.conditionCode];
-    Widget img;
-    if (imgPath != null) {
-      img = Image(
-        image: AssetImage(imgPath),
-        width: 50,
-        height: 50,
-      );
-    } else {
-      img = SizedBox(
-        width: 50,
-        height: 50,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(),
-          ),
-          child: Center(
-            child: Text(_weather.conditionCode.toString()),
-          ),
-        ),
-      );
-    }
-
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Column(
-          children: [
-            Text(DateFormat('HH:mm').format(_weather.date)),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: img,
-            ),
-            Text('${_weather.temp.round()} °C'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-const _months = {
+const _shortMonths = {
   DateTime.january: 'янв.',
   DateTime.february: 'февр.',
   DateTime.march: 'марта',
@@ -278,3 +195,4 @@ const _months = {
   DateTime.november: 'ноября',
   DateTime.december: 'дек.',
 };
+

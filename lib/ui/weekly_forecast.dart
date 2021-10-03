@@ -2,7 +2,7 @@ import 'package:eye_of_the_storm/data/weather_api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:eye_of_the_storm/data/weather_model.dart';
+import 'package:eye_of_the_storm/data/weather.dart';
 import 'package:eye_of_the_storm/ui/weather_icons.dart';
 
 class WeeklyForecastPage extends StatelessWidget {
@@ -136,14 +136,14 @@ class _WeatherParam extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var imageTint = Theme.of(context).brightness == Brightness.light
+    var iconTint = Theme.of(context).brightness == Brightness.light
         ? Colors.black
         : Colors.white;
 
     return ListTile(
       dense: true,
       minLeadingWidth: 0,
-      leading: Image(image: image, width: 20, height: 20, color: imageTint),
+      leading: Image(image: image, width: 20, height: 20, color: iconTint),
       title: Text(
         text,
         style: const TextStyle(fontSize: 17),
