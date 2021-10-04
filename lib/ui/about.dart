@@ -1,13 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-const _aboutText = '''
-Автор: Избаш В.В.
-Используемые сервисы: 
-- openweathermap.org
-- geonames.org
-''';
-
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
 

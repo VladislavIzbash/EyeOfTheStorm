@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'dart:developer' as dev;
 
 import 'package:eye_of_the_storm/data/weather_api.dart';
-import 'package:eye_of_the_storm/ui/about.dart';
 import 'package:eye_of_the_storm/ui/hourly_forecast.dart';
 import 'package:eye_of_the_storm/data/settings.dart';
 

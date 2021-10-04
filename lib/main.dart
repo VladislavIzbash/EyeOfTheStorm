@@ -50,11 +50,14 @@ class EotsApp extends StatelessWidget {
         baseColor: darkPrimary,
         variantColor: Color(0xff0d172b),
         accentColor: Color(0xff0a1121),
-        shadowLightColor: Colors.white,
+        shadowLightColor: Color(0xFF828282),
         defaultTextColor: Colors.white,
         textTheme: TextTheme(
           subtitle1: TextStyle(color: Color(0xffe5e5e5)),
           subtitle2: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white,
         ),
       ),
       materialTheme: ThemeData(
