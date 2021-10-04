@@ -63,14 +63,14 @@ class SettingsPage extends StatelessWidget {
                   _UnitToggle(
                     title: 'Давление',
                     first: 'мм.рт.ст.',
-                    second: 'кПа',
+                    second: 'гПа',
                     selectedIndex: settings.units.pressure == PressureUnit.mmHg ? 0 : 1,
                     onChanged: (index) {
                       var units = context.read<SettingsModel>().units;
                       context.read<SettingsModel>().units = UnitSettings(
                         units.temp,
                         units.speed,
-                        index == 0 ? PressureUnit.mmHg : PressureUnit.kpa,
+                        index == 0 ? PressureUnit.mmHg : PressureUnit.hPa,
                       );
                     },
                   ),

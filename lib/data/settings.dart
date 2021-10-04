@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum TempUnit { celsius, fahrenheit }
 enum SpeedUnit { meterSecond, kmHour }
-enum PressureUnit { mmHg, kpa }
+enum PressureUnit { mmHg, hPa }
 
 class UnitSettings {
   final TempUnit temp;
@@ -15,12 +15,12 @@ class UnitSettings {
   UnitSettings.fromPrefs(SharedPreferences prefs)
     : temp = prefs.getString('temp_unit') == 'F' ? TempUnit.fahrenheit : TempUnit.celsius,
       speed = prefs.getString('speed_unit') == 'km_h' ? SpeedUnit.kmHour : SpeedUnit.meterSecond,
-      pressure = prefs.getString('pressure_unit') == 'kpa' ? PressureUnit.kpa : PressureUnit.mmHg;
+      pressure = prefs.getString('pressure_unit') == 'hpa' ? PressureUnit.hPa : PressureUnit.mmHg;
 
   void save(SharedPreferences prefs) {
     prefs.setString('temp_unit', temp == TempUnit.celsius ? 'C' : 'F');
     prefs.setString('speed_unit', speed == SpeedUnit.kmHour ? 'km_h' : 'm_s');
-    prefs.setString('pressure_unit', pressure == PressureUnit.kpa ? 'kpa' : 'mm_hg');
+    prefs.setString('pressure_unit', pressure == PressureUnit.hPa ? 'hpa' : 'mm_hg');
   }
 
   String formatTemp(double tempC) {
@@ -39,11 +39,11 @@ class UnitSettings {
     }
   }
 
-  String formatPressure(int mgHg) {
-    if (pressure == PressureUnit.mmHg) {
-      return '$mgHg мм.рт.ст.';
+  String formatPressure(int hPa) {
+    if (pressure == PressureUnit.hPa) {
+      return '$hPa гПа';
     } else {
-      return '${(mgHg / 7.501).round()} кПа';
+      return '${(hPa / 1.333).round()} мм.рт.ст.';
     }
   }
 }
